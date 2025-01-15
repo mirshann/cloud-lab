@@ -13,9 +13,13 @@ resource "digitalocean_droplet" "vm" {
   size   = var.size
   image  = var.image
 
-  ssh_keys = [data.digitalocean_ssh_key.default.id]
+  # Assign all SSH keys to the droplet
+  ssh_keys = [
+    for key in data.digitalocean_ssh_keys.all_keys.ssh_keys : key.id
+  ]
+
+  tags = ["cloud-lab"]
 }
 
-data "digitalocean_ssh_key" "default" {
-  name = var.ssh_key_name
-}
+# Fetch all SSH keys from DigitalOcean
+data "digitalocean_ssh_keys" "all_keys" {}

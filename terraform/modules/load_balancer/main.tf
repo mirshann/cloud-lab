@@ -12,17 +12,27 @@ resource "digitalocean_loadbalancer" "lb" {
   region = var.region
 
   forwarding_rule {
-    entry_port     = 80
-    entry_protocol = "http"
-    target_port    = 80
-    target_protocol = "http"
+    tls_passthrough = true
+    entry_protocol = "https"
+    entry_port     = 443
+    target_protocol = "https"
+    target_port    = 443
   }
+
+  forwarding_rule {
+    entry_protocol = "http"
+    entry_port     = 80
+    target_protocol = "http"
+    target_port    = 80
+  }
+
+  droplet_ids = [for d in var.droplets : d.id]
 
   healthcheck {
     port     = 80
     protocol = "http"
     path     = "/"
   }
-
-  droplet_ids = [for d in var.droplets : d.id]
 }
+
+

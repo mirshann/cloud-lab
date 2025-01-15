@@ -18,6 +18,33 @@
         name: nginx
         state: started
         enabled: yes
+    
+    # Install Certbot and dependencies
+    - name: Install Certbot and dependencies
+      apt:
+        name:
+          - certbot
+          - python3-certbot-nginx
+        state: present
+        update_cache: yes
+
+    # Obtain Let's Encrypt SSL Certificate
+    - name: Obtain SSL certificate for Nginx
+      command: >
+        certbot --nginx
+        --non-interactive
+        --agree-tos
+        --email evgeniybog@gmail.com
+        -d lab.bog.rocks
+      register: certbot_result
+      changed_when: certbot_result.rc == 0
+      failed_when: certbot_result.rc != 0
+
+    # Reload Nginx to apply SSL
+    - name: Reload Nginx
+      service:
+        name: nginx
+        state: reloaded
 
     - name: Copy default index.html
       copy:
