@@ -8,30 +8,6 @@ module "compute" {
   ssh_key_name = "Evgeny PC Ubuntu"
 }
 
-data "template_file" "ansible_inventory" {
-  template = file("${path.module}/hosts.tpl")
-  vars = {
-    vm_ip = module.compute.public_ip
-  }
-}
-
-resource "local_file" "ansible_inventory" {
-  content  = data.template_file.ansible_inventory.rendered
-  filename = "../../../ansible/inventories/development/hosts.yml"
-}
-
-resource "null_resource" "configure_web_server" {
-  depends_on = [module.compute, local_file.ansible_inventory]
-
-  provisioner "local-exec" {
-    command = <<EOT
-      ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook \
-      -i ../../../ansible/inventories/development/hosts.yml \
-      ../../../ansible/playbooks/webserver.yml
-    EOT
-  }
-}
-
 module "load_balancer" {
   source = "../../modules/load_balancer"
 

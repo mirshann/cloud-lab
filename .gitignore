@@ -36,3 +36,6 @@ archive_log.txt
 
 # Binary artifacts
 bin/
+
+# Ignore Ansible generated inventory files
+ansible/inventories/*/hosts.yml
