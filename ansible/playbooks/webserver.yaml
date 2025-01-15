@@ -1,0 +1,35 @@
+---
+- name: Configure Web Server
+  hosts: web_servers
+  become: true
+
+  tasks:
+    - name: Ensure apt cache is updated
+      apt:
+        update_cache: yes
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Enable and start Nginx service
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Copy default index.html
+      copy:
+        content: "<h1>Welcome to Your Web Server!</h1>"
+        dest: /var/www/html/index.html
+        mode: '0644'
+
+    - name: Open HTTP and HTTPS ports
+      ufw:
+        rule: allow
+        port: "{{ item }}"
+        proto: tcp
+      with_items:
+        - 80
+        - 443

@@ -1,0 +1,38 @@
+# Terraform files
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+*.tfvars.json
+
+# Terraform variables
+*.tfvars
+
+# Ansible files
+*.retry
+*.vault
+*.log
+inventory/
+
+# SSH keys
+*.pem
+*.key
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs and temporary files
+logs/
+*.log
+archive_log.txt
+
+# Binary artifacts
+bin/
