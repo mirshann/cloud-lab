@@ -1,3 +1,5 @@
+
+```
 cloud-lab/
 ├── ansible/                     # Ansible configuration management
 │   ├── inventories/             # Inventory files for managing hosts
@@ -50,3 +52,4 @@ cloud-lab/
 ├── README.md                    # Documentation
 ├── .gitignore                   # Git ignore file
 └── LICENSE                      # Project license
+```
