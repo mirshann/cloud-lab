@@ -19,12 +19,7 @@ resource "digitalocean_loadbalancer" "lb" {
     target_port    = 443
   }
 
-  forwarding_rule {
-    entry_protocol = "http"
-    entry_port     = 80
-    target_protocol = "http"
-    target_port    = 80
-  }
+  redirect_http_to_https = true
 
   droplet_ids = [for d in var.droplets : d.id]
 
