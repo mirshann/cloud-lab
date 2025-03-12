@@ -1,0 +1,44 @@
+---
+   - name: Install dependencies
+     apt:
+       name:
+         - curl
+         - openssh-server
+         - ca-certificates
+         - tzdata
+         - perl
+       state: present
+       update_cache: yes
+
+   - name: Add GitLab repository script
+     shell: |
+       curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh | bash
+     args:
+       creates: /etc/apt/sources.list.d/gitlab_gitlab-ee.list
+
+   - name: Install GitLab Omnibus package
+     apt:
+       name: gitlab-ee
+       state: latest
+       update_cache: yes
+
+   - name: Configure GitLab external URL and certificate paths
+     template:
+       src: gitlab.rb.j2
+       dest: /etc/gitlab/gitlab.rb
+       owner: root
+       group: root
+       mode: '0644'
+     notify: reconfigure gitlab
+
+   - name: Copy TLS certificate files
+     copy:
+       src: "{{ item.src }}"
+       dest: "{{ item.dest }}"
+       owner: root
+       group: root
+       mode: '0644'
+     loop:
+       - { src: 'wildcard.crt', dest: '/etc/gitlab/ssl/git.bog.rocks.crt' }
+       - { src: 'wildcard.key', dest: '/etc/gitlab/ssl/git.bog.rocks.key' }
+     notify: reconfigure gitlab

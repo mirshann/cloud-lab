@@ -1,12 +1,13 @@
-module "compute" {
-  source      = "../../modules/compute"
-  
-  vm_name     = "cloud-lab-vm"
-  region      = "nyc3"
-  size        = "s-1vcpu-1gb"
-  image       = "ubuntu-20-04-x64"
-  ssh_key_name = "Evgeny PC Ubuntu"
+module "gitlab_vm" {
+ source      = "../../modules/compute"
+ vm_name     = "gitlab"
+ vm_size     = "n1-standard-4" # GitLab recommends at least 4 vCPUs and 8GB memory
+ image       = "ubuntu-22-04-lts"
+ network_id  = module.network.network_id
+ subnet_id   = module.network.subnet_id
+ tags        = ["gitlab", "public-access"]
 }
+
 
 module "load_balancer" {
   source = "../../modules/load_balancer"
@@ -18,10 +19,10 @@ module "load_balancer" {
 
 module "dns" {
   source = "../../modules/dns"
-
-  domain_name      = "bog.rocks"
-  subdomain        = "lab"
-  load_balancer_ip = module.load_balancer.lb_ip
+  domain_name      = "git.bog.rocks"
+  record_type      = "A"
+  record_value     = module.gitlab_vm.public_ip
+  ttl              = 3600
 }
 
 output "vm_size" {
